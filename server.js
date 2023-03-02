@@ -2,16 +2,18 @@ const express = require("express");
 const app = express();
 const userRouter = require("./routes/users");
 const postRouter = require("./routes/posts");
+const authRouter = require("./routes/auth");
 const PORT = 4000;
 const mongoose = require("mongoose");
 const helmet = require("helmet");
 require("dotenv").config();
 
 // 脆弱性対策
-app.use(helmet()) 
+app.use(helmet());
 
 // データベース接続
-mongoose.connect(process.env.MONGOURL)
+mongoose
+  .connect(process.env.MONGOURL)
   .then(() => {
     console.log("DB接続中・・・");
   })
@@ -23,6 +25,7 @@ mongoose.connect(process.env.MONGOURL)
 app.use(express.json());
 app.use("/api/users", userRouter);
 app.use("/api/posts", postRouter);
+app.use("/api/auth", authRouter);
 
 app.get("/", (req, res) => {
   res.send("hello express");
