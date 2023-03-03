@@ -1,8 +1,8 @@
 const router = require("express").Router();
 const User = require("../model/User");
 
-// ログイン
-router.post("/login", async (req, res) => {
+// サインイン
+router.post("/signin", async (req, res) => {
   try {
     const user = await User.findOne({ username: req.body.username });
 
@@ -14,7 +14,8 @@ router.post("/login", async (req, res) => {
       return res.status(400).json("パスワードが違います");
     }
 
-    return res.status(200).json(user);
+    const { password, updatedAt, ...other } = user._doc;
+    return res.status(200).json(other);
   } catch (err) {
     return res.status(500).json(err);
   }
