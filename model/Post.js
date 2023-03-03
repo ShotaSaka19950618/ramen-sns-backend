@@ -17,6 +17,7 @@ const PostSchema = new mongoose.Schema(
     },
     img: {
       type: String,
+      default: "",
     },
     comments: {
       type: Array,
