@@ -1,21 +1,6 @@
 const router = require("express").Router();
 const User = require("../model/User");
 
-// ユーザー情報の登録
-router.post("/", async (req, res) => {
-  try {
-    const newUser = new User({
-      username: req.body.username,
-      name: req.body.name,
-      password: req.body.password,
-    });
-    const user = await newUser.save();
-    return res.status(200).json(user);
-  } catch (err) {
-    return res.status(500).json(err);
-  }
-});
-
 // ユーザー情報の取得
 router.get("/", async (req, res) => {
   const id = req.query.id;
