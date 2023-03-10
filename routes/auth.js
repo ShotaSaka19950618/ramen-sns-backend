@@ -38,7 +38,7 @@ router.post("/signin", async (req, res) => {
 
     const { password, updatedAt, ...payload } = user._doc;
 
-    const token = jwt.sign(payload, "secret");
+    const token = jwt.sign(payload, process.env.JWT_SECRET);
     return res.status(200).json({ token });
   } catch (err) {
     return res.status(500).json(err);
@@ -51,7 +51,7 @@ router.get("/user", async (req, res) => {
     const bearToken = await req.headers["authorization"];
     const bearer = await bearToken.split(" ");
     const token = await bearer[1];
-    const user = await jwt.verify(token, "secret");
+    const user = await jwt.verify(token, process.env.JWT_SECRET);
     return res.status(200).json({ user });
   } catch (err) {
     return res.status(500).json(err);
