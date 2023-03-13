@@ -1,4 +1,5 @@
 const express = require("express");
+const cors = require("cors");
 const app = express();
 const userRouter = require("./routes/users");
 const postRouter = require("./routes/posts");
@@ -7,6 +8,9 @@ const PORT = 4000;
 const mongoose = require("mongoose");
 const helmet = require("helmet");
 require("dotenv").config();
+
+// CORS対策
+app.use(cors());
 
 // 脆弱性対策
 app.use(helmet());
