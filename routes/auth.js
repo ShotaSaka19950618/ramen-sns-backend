@@ -1,12 +1,12 @@
 const router = require("express").Router();
 const User = require("../model/User");
 const bcrypt = require("bcrypt");
-const saltRounds = 10;
 const jwt = require("jsonwebtoken");
 
 // ユーザー情報の登録
 router.post("/register", async (req, res) => {
   try {
+    const saltRounds = 10;
     const hashedPassword = await bcrypt.hash(req.body.password, saltRounds);
     console.log(hashedPassword);
     const newUser = new User({

@@ -1,8 +1,9 @@
 const router = require("express").Router();
 const User = require("../model/User");
+const isAuth = require("../middleware/isAuth");
 
 // ユーザー情報の取得
-router.get("/", async (req, res) => {
+router.get("/", isAuth, async (req, res) => {
   const id = req.query.id;
   const username = req.query.username;
   try {
@@ -17,7 +18,7 @@ router.get("/", async (req, res) => {
 });
 
 // ユーザー情報の更新
-router.put("/:id", async (req, res) => {
+router.put("/:id", isAuth, async (req, res) => {
   if (req.body.id === req.params.id || req.body.isAdmin) {
     try {
       const user = await User.findByIdAndUpdate(req.params.id, {
@@ -33,7 +34,7 @@ router.put("/:id", async (req, res) => {
 });
 
 // ユーザー情報の削除
-router.delete("/:id", async (req, res) => {
+router.delete("/:id", isAuth, async (req, res) => {
   if (req.body.id === req.params.id || req.body.isAdmin) {
     try {
       const user = await User.findByIdAndDelete(req.params.id);
@@ -47,7 +48,7 @@ router.delete("/:id", async (req, res) => {
 });
 
 // フォロー関係
-router.put("/:id/follow", async (req, res) => {
+router.put("/:id/follow", isAuth, async (req, res) => {
   if (req.body.id !== req.params.id) {
     try {
       const currentUser = await User.findById(req.params.id);
@@ -89,7 +90,7 @@ router.put("/:id/follow", async (req, res) => {
 });
 
 // 全フォロー取得
-router.get("/:id/followings", async (req, res) => {
+router.get("/:id/followings", isAuth, async (req, res) => {
   try {
     const currentUser = await User.findById(req.params.id);
     const followings = await Promise.all(
@@ -106,7 +107,7 @@ router.get("/:id/followings", async (req, res) => {
 });
 
 // 全フォロワー取得
-router.get("/:id/followers", async (req, res) => {
+router.get("/:id/followers", isAuth, async (req, res) => {
   try {
     const currentUser = await User.findById(req.params.id);
     const followers = await Promise.all(
