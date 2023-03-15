@@ -140,10 +140,16 @@ router.get("/profile/:username", isAuth, async (req, res) => {
   try {
     const user = await User.findOne({ username: req.params.username });
     const posts = await Post.find({ userId: user._id });
+    const timeline = await Promise.all(
+      posts.map(async (post) => {
+        const user = await User.findById(post.userid)
+        return {post, user}
+      })
+    )
     return res.json({
       success: true,
       message: "タイムラインを取得しました",
-      posts: posts,
+      timeline: timeline,
     });
   } catch (err) {
     return res.json(err);
@@ -154,17 +160,23 @@ router.get("/profile/:username", isAuth, async (req, res) => {
 router.get("/timeline/:username", isAuth, async (req, res) => {
   try {
     const currentUser = await User.findOne({ username: req.params.username });
-    const currentUserPosts = await Post.find({ userId: currentUser._id });
+    const currentUserPosts = await Post.find({ userid: currentUser._id });
     const followingsPosts = await Promise.all(
       currentUser.followings.map((followingId) => {
         return Post.find({ userid: followingId });
       })
     );
     const posts = currentUserPosts.concat(...followingsPosts);
+    const timeline = await Promise.all(
+      posts.map(async (post) => {
+        const user = await User.findById(post.userid)
+        return {post, user}
+      })
+    )
     return res.json({
       success: true,
       message: "タイムラインを取得しました",
-      posts: posts,
+      timeline: timeline,
     });
   } catch (err) {
     return res.json(err);
