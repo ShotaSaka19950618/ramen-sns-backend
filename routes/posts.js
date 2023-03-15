@@ -5,12 +5,15 @@ const isAuth = require("../middleware/isAuth");
 
 // 投稿の登録
 router.post("/", isAuth, async (req, res) => {
-  const newPost = new Post(req.body);
   try {
-    const post = await newPost.save();
-    return res.status(200).json(post);
+    const newPost = new Post(req.body);
+    await newPost.save();
+    return res.json({
+      success: true,
+      message: "投稿しました！！",
+    });
   } catch (err) {
-    return res.status(500).json(err);
+    return res.json(err);
   }
 });
 
@@ -18,9 +21,13 @@ router.post("/", isAuth, async (req, res) => {
 router.get("/", isAuth, async (req, res) => {
   try {
     const post = await Post.findById(req.params.id);
-    return res.status(200).json(post);
+    return res.json({
+      success: true,
+      message: "投稿を取得しました",
+      post: post,
+    });
   } catch (err) {
-    return res.status(500).json(err);
+    return res.json(err);
   }
 });
 
@@ -32,12 +39,18 @@ router.put("/:id", isAuth, async (req, res) => {
       await post.updateOne({
         $set: req.body,
       });
-      return res.status(200).json("投稿が更新されました");
+      return res.json({
+        success: true,
+        message: "投稿を更新しました",
+      });
     } else {
-      return res.status(403).json("更新できません");
+      return res.json({
+        success: false,
+        message: "更新できません",
+      });
     }
   } catch (err) {
-    return res.status(500).json(err);
+    return res.json(err);
   }
 });
 
@@ -47,12 +60,18 @@ router.delete("/:id", isAuth, async (req, res) => {
     const post = await Post.findById(req.params.id);
     if (req.body.userid === post.userid) {
       await post.deleteOne();
-      return res.status(200).json("投稿が削除されました");
+      return res.json({
+        success: true,
+        message: "投稿を削除しました",
+      });
     } else {
-      return res.status(403).json("削除できません");
+      return res.json({
+        success: false,
+        message: "削除できません",
+      });
     }
   } catch (err) {
-    return res.status(500).json(err);
+    return res.json(err);
   }
 });
 
@@ -66,17 +85,23 @@ router.put("/:id/like", isAuth, async (req, res) => {
           likes: req.body.userid,
         },
       });
-      return res.status(200).json("いいねしました");
+      return res.json({
+        success: true,
+        message: "いいねしました",
+      });
     } else {
       await post.updateOne({
         $pull: {
           likes: req.body.userid,
         },
       });
-      return res.status(200).json("いいね解除しました");
+      return res.json({
+        success: true,
+        message: "いいね解除しました",
+      });
     }
   } catch (err) {
-    return res.status(500).json(err);
+    return res.json(err);
   }
 });
 
@@ -90,17 +115,23 @@ router.put("/:id/bookmark", isAuth, async (req, res) => {
           bookmarks: req.body.userid,
         },
       });
-      return res.status(200).json("ブックマークしました");
+      return res.json({
+        success: true,
+        message: "ブックマークしました",
+      });
     } else {
       await post.updateOne({
         $pull: {
           bookmarks: req.body.userid,
         },
       });
-      return res.status(200).json("ブックマーク解除しました");
+      return res.json({
+        success: true,
+        message: "ブックマーク解除しました",
+      });
     }
   } catch (err) {
-    return res.status(500).json(err);
+    return res.json(err);
   }
 });
 
@@ -109,9 +140,13 @@ router.get("/profile/:username", isAuth, async (req, res) => {
   try {
     const user = await User.findOne({ username: req.params.username });
     const posts = await Post.find({ userId: user._id });
-    return res.status(200).json(posts);
+    return res.json({
+      success: true,
+      message: "タイムラインを取得しました",
+      posts: posts,
+    });
   } catch (err) {
-    return res.status(500).json(err);
+    return res.json(err);
   }
 });
 
@@ -126,9 +161,13 @@ router.get("/timeline/:username", isAuth, async (req, res) => {
       })
     );
     const posts = currentUserPosts.concat(...followingsPosts);
-    return res.status(200).json(posts);
+    return res.json({
+      success: true,
+      message: "タイムラインを取得しました",
+      posts: posts,
+    });
   } catch (err) {
-    return res.status(500).json(err);
+    return res.json(err);
   }
 });
 
