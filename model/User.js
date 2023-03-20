@@ -22,11 +22,11 @@ const UserSchema = new mongoose.Schema(
     },
     profilePicture: {
       type: String,
-      default: "/images/profile/noImage.jpg",
+      default: "profile/noImage.jpg",
     },
     coverPicture: {
       type: String,
-      default: "/images/cover/noImage.jpg",
+      default: "cover/noImage.jpg",
     },
     followers: {
       type: Array,
