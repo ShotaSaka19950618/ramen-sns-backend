@@ -4,9 +4,11 @@ const app = express();
 const userRouter = require("./routes/users");
 const postRouter = require("./routes/posts");
 const authRouter = require("./routes/auth");
+const uploadRouter = require("./routes/upload");
 const PORT = 4000;
 const mongoose = require("mongoose");
 const helmet = require("helmet");
+const path = require("path");
 require("dotenv").config();
 
 // CORS対策
@@ -26,10 +28,12 @@ mongoose
   });
 
 // ミドルウェア
+app.use("/images", express.static(path.join(__dirname, "public/images")));
 app.use(express.json());
 app.use("/api/users", userRouter);
 app.use("/api/posts", postRouter);
 app.use("/api/auth", authRouter);
+app.use("/api/upload", uploadRouter);
 
 app.get("/", (req, res) => {
   res.send("hello express");
