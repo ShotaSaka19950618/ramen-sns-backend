@@ -140,8 +140,11 @@ router.get("/profile/:username", isAuth, async (req, res) => {
   try {
     const user = await User.findOne({ username: req.params.username });
     const posts = await Post.find({ userId: user._id });
+    const sortPosts = posts.sort((post1, post2) => {
+      return new Date(post2.createdAt) - new Date(post1.createdAt);
+    })
     const timeline = await Promise.all(
-      posts.map(async (post) => {
+      sortPosts.map(async (post) => {
         const user = await User.findById(post.userid)
         return {post, user}
       })
@@ -167,8 +170,11 @@ router.get("/timeline/:username", isAuth, async (req, res) => {
       })
     );
     const posts = currentUserPosts.concat(...followingsPosts);
+    const sortPosts = posts.sort((post1, post2) => {
+      return new Date(post2.createdAt) - new Date(post1.createdAt);
+    })
     const timeline = await Promise.all(
-      posts.map(async (post) => {
+      sortPosts.map(async (post) => {
         const user = await User.findById(post.userid)
         return {post, user}
       })
