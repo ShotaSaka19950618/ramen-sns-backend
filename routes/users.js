@@ -48,7 +48,7 @@ router.delete("/:userid", isAuth, async (req, res) => {
 // フォロー関係
 router.put("/:userid/follow", isAuth, async (req, res) => {
   try {
-    if (req.body.targetUserid !== req.params.id) {
+    if (req.body.targetUserid !== req.params.userid) {
       const currentUser = await User.findById(req.params.userid);
       const targetUser = await User.findById(req.body.targetUserid);
       // フォロー関係を判定
