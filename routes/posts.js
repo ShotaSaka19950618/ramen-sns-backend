@@ -18,9 +18,9 @@ router.post("/", isAuth, async (req, res) => {
 });
 
 // 投稿の取得
-router.get("/", isAuth, async (req, res) => {
+router.get("/:postid", isAuth, async (req, res) => {
   try {
-    const post = await Post.findById(req.params.id);
+    const post = await Post.findById(req.params.postid);
     return res.json({
       success: true,
       message: "投稿を取得しました",
@@ -32,53 +32,37 @@ router.get("/", isAuth, async (req, res) => {
 });
 
 // 投稿の更新
-router.put("/:id", isAuth, async (req, res) => {
+router.put("/:postid", isAuth, async (req, res) => {
   try {
-    const post = await Post.findById(req.params.id);
-    if (req.body.userid === post.userid) {
-      await post.updateOne({
-        $set: req.body,
-      });
-      return res.json({
-        success: true,
-        message: "投稿を更新しました",
-      });
-    } else {
-      return res.json({
-        success: false,
-        message: "更新できません",
-      });
-    }
+    await Post.findByIdAndUpdate(req.params.postid, {
+      $set: req.body,
+    });
+    return res.json({
+      success: true,
+      message: "投稿を更新しました",
+    });
   } catch (err) {
     return res.json(err);
   }
 });
 
 // 投稿の削除
-router.delete("/:id", isAuth, async (req, res) => {
+router.delete("/:postid", isAuth, async (req, res) => {
   try {
-    const post = await Post.findById(req.params.id);
-    if (req.body.userid === post.userid) {
-      await post.deleteOne();
-      return res.json({
-        success: true,
-        message: "投稿を削除しました",
-      });
-    } else {
-      return res.json({
-        success: false,
-        message: "削除できません",
-      });
-    }
+    await Post.findByIdAndDelete(req.params.postid);
+    return res.json({
+      success: true,
+      message: "投稿を削除しました",
+    });
   } catch (err) {
     return res.json(err);
   }
 });
 
 // いいね関係
-router.put("/:id/like", isAuth, async (req, res) => {
+router.put("/:postid/like", isAuth, async (req, res) => {
   try {
-    const post = await Post.findById(req.params.id);
+    const post = await Post.findById(req.params.postid);
     if (!post.likes.includes(req.body.userid)) {
       await post.updateOne({
         $push: {
@@ -106,9 +90,9 @@ router.put("/:id/like", isAuth, async (req, res) => {
 });
 
 // ブックマーク関係
-router.put("/:id/bookmark", isAuth, async (req, res) => {
+router.put("/:postid/bookmark", isAuth, async (req, res) => {
   try {
-    const post = await Post.findById(req.params.id);
+    const post = await Post.findById(req.params.postid);
     if (!post.bookmarks.includes(req.body.userid)) {
       await post.updateOne({
         $push: {
@@ -135,20 +119,20 @@ router.put("/:id/bookmark", isAuth, async (req, res) => {
   }
 });
 
-// プロフィール専用のタイムラインの投稿を取得
-router.get("/profile/:username", isAuth, async (req, res) => {
+// プロフィール専用のタイムライン投稿を取得
+router.get("/:userid/profile", isAuth, async (req, res) => {
   try {
-    const user = await User.findOne({ username: req.params.username });
+    const user = await User.findById(req.params.userid);
     const posts = await Post.find({ userId: user._id });
     const sortPosts = posts.sort((post1, post2) => {
       return new Date(post2.createdAt) - new Date(post1.createdAt);
-    })
+    });
     const timeline = await Promise.all(
       sortPosts.map(async (post) => {
-        const user = await User.findById(post.userid)
-        return {post, user}
+        const postUser = await User.findById(post.userid);
+        return { post, user: postUser };
       })
-    )
+    );
     return res.json({
       success: true,
       message: "タイムラインを取得しました",
@@ -159,10 +143,10 @@ router.get("/profile/:username", isAuth, async (req, res) => {
   }
 });
 
-// タイムラインの投稿を取得
-router.get("/timeline/:username", isAuth, async (req, res) => {
+// フォローしているユーザーのタイムライン投稿を取得
+router.get("/:userid/timeline", isAuth, async (req, res) => {
   try {
-    const currentUser = await User.findOne({ username: req.params.username });
+    const currentUser = await User.findById(req.params.userid);
     const currentUserPosts = await Post.find({ userid: currentUser._id });
     const followingsPosts = await Promise.all(
       currentUser.followings.map((followingId) => {
@@ -172,13 +156,36 @@ router.get("/timeline/:username", isAuth, async (req, res) => {
     const posts = currentUserPosts.concat(...followingsPosts);
     const sortPosts = posts.sort((post1, post2) => {
       return new Date(post2.createdAt) - new Date(post1.createdAt);
-    })
+    });
     const timeline = await Promise.all(
       sortPosts.map(async (post) => {
-        const user = await User.findById(post.userid)
-        return {post, user}
+        const postUser = await User.findById(post.userid);
+        return { post, user: postUser };
       })
-    )
+    );
+    return res.json({
+      success: true,
+      message: "タイムラインを取得しました",
+      timeline: timeline,
+    });
+  } catch (err) {
+    return res.json(err);
+  }
+});
+
+// 全タイムライン投稿を取得
+router.get("/:userid/all", isAuth, async (req, res) => {
+  try {
+    const posts = await Post.find();
+    const sortPosts = posts.sort((post1, post2) => {
+      return new Date(post2.createdAt) - new Date(post1.createdAt);
+    });
+    const timeline = await Promise.all(
+      sortPosts.map(async (post) => {
+        const postUser = await User.findById(post.userid);
+        return { post, user: postUser };
+      })
+    );
     return res.json({
       success: true,
       message: "タイムラインを取得しました",
