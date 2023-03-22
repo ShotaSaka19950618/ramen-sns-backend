@@ -24,7 +24,7 @@ router.post("/register", async (req, res) => {
     return res.json({
       success: true,
       message: "アカウント作成に成功しました！！",
-      user: user,
+      data: user,
     });
   } catch (err) {
     return res.json(err);
@@ -70,7 +70,7 @@ router.get("/user", async (req, res) => {
     const user = jwt.verify(token, process.env.JWT_SECRET);
     return res.status(200).json({
       success: true,
-      user: user,
+      data: user,
     });
   } catch (err) {
     return res.json(err);

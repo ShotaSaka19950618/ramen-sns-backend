@@ -24,7 +24,7 @@ router.get("/:postid", isAuth, async (req, res) => {
     return res.json({
       success: true,
       message: "投稿を取得しました",
-      post: post,
+      data: post,
     });
   } catch (err) {
     return res.json(err);
@@ -136,7 +136,7 @@ router.get("/:userid/profile", isAuth, async (req, res) => {
     return res.json({
       success: true,
       message: "タイムラインを取得しました",
-      timeline: timeline,
+      data: timeline,
     });
   } catch (err) {
     return res.json(err);
@@ -166,7 +166,7 @@ router.get("/:userid/timeline", isAuth, async (req, res) => {
     return res.json({
       success: true,
       message: "タイムラインを取得しました",
-      timeline: timeline,
+      data: timeline,
     });
   } catch (err) {
     return res.json(err);
@@ -189,7 +189,7 @@ router.get("/:userid/all", isAuth, async (req, res) => {
     return res.json({
       success: true,
       message: "タイムラインを取得しました",
-      timeline: timeline,
+      data: timeline,
     });
   } catch (err) {
     return res.json(err);

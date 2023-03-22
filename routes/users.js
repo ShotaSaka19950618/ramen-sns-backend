@@ -10,7 +10,7 @@ router.get("/:userid", isAuth, async (req, res) => {
     return res.json({
       success: true,
       message: "ユーザー情報を取得しました",
-      user: other,
+      data: other,
     });
   } catch (err) {
     return res.json(err);
@@ -109,7 +109,7 @@ router.get("/:userid/followings", isAuth, async (req, res) => {
     );
     return res.json({
       success: true,
-      followings: followings,
+      data: followings,
     });
   } catch (err) {
     return res.json(err);
@@ -129,7 +129,7 @@ router.get("/:userid/followers", isAuth, async (req, res) => {
     );
     return res.json({
       success: true,
-      followers: followers,
+      data: followers,
     });
   } catch (err) {
     return res.json(err);
