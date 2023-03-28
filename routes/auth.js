@@ -54,6 +54,7 @@ router.post("/signin", async (req, res) => {
     const token = jwt.sign(payload, process.env.JWT_SECRET);
     return res.json({
       success: true,
+      message: "サインインに成功しました！！",
       token: token,
     });
   } catch (err) {
@@ -70,6 +71,7 @@ router.get("/user", async (req, res) => {
     const user = jwt.verify(token, process.env.JWT_SECRET);
     return res.status(200).json({
       success: true,
+      message: "トークン認証に成功しました！！",
       data: user,
     });
   } catch (err) {

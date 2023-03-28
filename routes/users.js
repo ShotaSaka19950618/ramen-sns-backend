@@ -109,6 +109,7 @@ router.get("/:userid/followings", isAuth, async (req, res) => {
     );
     return res.json({
       success: true,
+      message: "全フォローを取得しました",
       data: followings,
     });
   } catch (err) {
@@ -129,6 +130,7 @@ router.get("/:userid/followers", isAuth, async (req, res) => {
     );
     return res.json({
       success: true,
+      message: "全フォロワーを取得しました",
       data: followers,
     });
   } catch (err) {
