@@ -19,7 +19,11 @@ const PostSchema = new mongoose.Schema(
       type: String,
       default: "",
     },
-    comments: {
+    commentsSend: {
+      type: Array,
+      default: [],
+    },
+    commentsReceived: {
       type: Array,
       default: [],
     },
