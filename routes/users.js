@@ -1,5 +1,6 @@
 const router = require("express").Router();
 const User = require("../model/User");
+const Notification = require("../model/Notification");
 const isAuth = require("../middleware/isAuth");
 
 // ユーザー情報の取得
@@ -64,6 +65,12 @@ router.put("/:userid/follow", isAuth, async (req, res) => {
             followings: req.body.targetUserid,
           },
         });
+        const newNotification = new Notification({
+          useridSend: req.params.userid,
+          useridReceived: req.body.targetUserid,
+          desc: `あなたをフォローしました`,
+        });
+        await newNotification.save();
         return res.json({
           success: true,
           message: "フォローしました",

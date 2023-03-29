@@ -1,6 +1,7 @@
 const router = require("express").Router();
-const Post = require("../model/Post");
 const User = require("../model/User");
+const Post = require("../model/Post");
+const Notification = require("../model/Notification");
 const isAuth = require("../middleware/isAuth");
 
 // 投稿の登録
@@ -9,9 +10,16 @@ router.post("/", isAuth, async (req, res) => {
     const newPost = new Post(req.body);
     const post = await newPost.save();
     if (req.body.commentsSend) {
-      await Post.findByIdAndUpdate(req.body.commentsSend, {
+      const receivedPost = await Post.findByIdAndUpdate(req.body.commentsSend, {
         commentsReceived: post._id,
       });
+      const newNotification = new Notification({
+        useridSend: req.body.userid,
+        useridReceived: receivedPost.userid,
+        postid: post._id,
+        desc: `あなたの投稿にコメントしました`,
+      });
+      await newNotification.save();
     }
     return res.json({
       success: true,
@@ -97,6 +105,15 @@ router.put("/:postid/like", isAuth, async (req, res) => {
           likes: req.body.userid,
         },
       });
+      if (req.body.userid !== req.body.targetUserid) {
+        const newNotification = new Notification({
+          useridSend: req.body.userid,
+          useridReceived: req.body.targetUserid,
+          postid: post._id,
+          desc: `あなたを投稿にいいねしました`,
+        });
+        await newNotification.save();
+      }
       return res.json({
         success: true,
         message: "いいねしました",
@@ -173,7 +190,10 @@ router.put("/:postid/bookmark", isAuth, async (req, res) => {
 // プロフィール専用のタイムライン投稿を取得
 router.get("/:userid/profile", isAuth, async (req, res) => {
   try {
-    const posts = await Post.find({ userid: req.params.userid, commentsSend: "" });
+    const posts = await Post.find({
+      userid: req.params.userid,
+      commentsSend: "",
+    });
     const sortPosts = posts.sort((post1, post2) => {
       return new Date(post2.createdAt) - new Date(post1.createdAt);
     });
@@ -197,7 +217,10 @@ router.get("/:userid/profile", isAuth, async (req, res) => {
 router.get("/:userid/timeline", isAuth, async (req, res) => {
   try {
     const currentUser = await User.findById(req.params.userid);
-    const currentUserPosts = await Post.find({ userid: currentUser._id, commentsSend: "" });
+    const currentUserPosts = await Post.find({
+      userid: currentUser._id,
+      commentsSend: "",
+    });
     const followingsPosts = await Promise.all(
       currentUser.followings.map((followingId) => {
         return Post.find({ userid: followingId, commentsSend: "" });
@@ -249,10 +272,12 @@ router.get("/:userid/all", isAuth, async (req, res) => {
 // 店舗ランキングを取得
 router.get("/:userid/ranking", isAuth, async (req, res) => {
   try {
-    const shop = await Post.aggregate([{$match: {commentsSend: ""}}]).group({
-      _id: "$shopname",
-      count: { $sum: 1 },
-    });
+    const shop = await Post.aggregate([{ $match: { commentsSend: "" } }]).group(
+      {
+        _id: "$shopname",
+        count: { $sum: 1 },
+      }
+    );
     const ranking = shop.sort((shop1, shop2) => {
       return new Date(shop2.count) - new Date(shop1.count);
     });
