@@ -17,6 +17,7 @@ router.post("/", isAuth, async (req, res) => {
         useridSend: req.body.userid,
         useridReceived: receivedPost.userid,
         postid: post._id,
+        postDesc: post.desc,
         desc: `あなたの投稿にコメントしました`,
       });
       await newNotification.save();
@@ -110,6 +111,7 @@ router.put("/:postid/like", isAuth, async (req, res) => {
           useridSend: req.body.userid,
           useridReceived: req.body.targetUserid,
           postid: post._id,
+          postDesc: post.desc,
           desc: `あなたを投稿にいいねしました`,
         });
         await newNotification.save();

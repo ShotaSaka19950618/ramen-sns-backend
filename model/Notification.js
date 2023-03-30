@@ -14,6 +14,10 @@ const NotificationSchema = new mongoose.Schema(
       type: String,
       require: true,
     },
+    postDesc: {
+      type: String,
+      max: 140,
+    },
     desc: {
       type: String,
       max: 140,
