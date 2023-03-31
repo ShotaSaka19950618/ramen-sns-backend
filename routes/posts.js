@@ -11,7 +11,9 @@ router.post("/", isAuth, async (req, res) => {
     const post = await newPost.save();
     if (req.body.commentsSend) {
       const receivedPost = await Post.findByIdAndUpdate(req.body.commentsSend, {
-        commentsReceived: post._id,
+        $push: {
+          commentsReceived: post._id,
+        },
       });
       const newNotification = new Notification({
         useridSend: req.body.userid,
@@ -67,6 +69,36 @@ router.delete("/:postid", isAuth, async (req, res) => {
     return res.json({
       success: true,
       message: "投稿を削除しました",
+    });
+  } catch (err) {
+    return res.json(err);
+  }
+});
+
+// 関連する投稿を取得
+router.get("/:postid/connection", isAuth, async (req, res) => {
+  try {
+    const data = {};
+    const targetPost = await Post.findById(req.params.postid);
+    const targetUser = await User.findById(targetPost.userid);
+    data.target = { post: targetPost, user: targetUser };
+    if (targetPost.commentsSend[0]) {
+      const parentPost = await Post.findById(targetPost.commentsSend[0]);
+      const parentUser = await User.findById(parentPost.userid);
+      data.parent = { post: parentPost, user: parentUser };
+    }
+    const child = await Promise.all(
+      targetPost.commentsReceived.map(async (id) => {
+        const childPost = await Post.findById(id);
+        const childUser = await User.findById(childPost.userid);
+        return { post: childPost, user: childUser };
+      })
+    );
+    data.child = child;
+    return res.json({
+      success: true,
+      message: "投稿を取得しました",
+      data: data,
     });
   } catch (err) {
     return res.json(err);
@@ -283,7 +315,6 @@ router.get("/:userid/ranking", isAuth, async (req, res) => {
     const ranking = shop.sort((shop1, shop2) => {
       return new Date(shop2.count) - new Date(shop1.count);
     });
-
     return res.json({
       success: true,
       message: "店舗ランキングを取得しました",
