@@ -6,7 +6,7 @@ const postRouter = require("./routes/posts");
 const notificationRouter = require("./routes/notifications");
 const authRouter = require("./routes/auth");
 const uploadRouter = require("./routes/upload");
-const PORT = 3000;
+const PORT = 8080;
 const mongoose = require("mongoose");
 const helmet = require("helmet");
 const path = require("path");
@@ -29,7 +29,6 @@ mongoose
   });
 
 // ミドルウェア
-app.use("/images", express.static(path.join(__dirname, "public/images")));
 app.use(express.json());
 app.use("/api/users", userRouter);
 app.use("/api/posts", postRouter);
