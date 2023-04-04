@@ -2,6 +2,7 @@ const router = require("express").Router();
 const User = require("../model/User");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
+require("dotenv").config();
 
 // ユーザー情報の登録
 router.post("/register", async (req, res) => {
