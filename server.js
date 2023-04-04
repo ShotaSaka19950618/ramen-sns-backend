@@ -9,7 +9,6 @@ const uploadRouter = require("./routes/upload");
 const PORT = 8080;
 const mongoose = require("mongoose");
 const helmet = require("helmet");
-const path = require("path");
 require("dotenv").config();
 
 // CORS対策
