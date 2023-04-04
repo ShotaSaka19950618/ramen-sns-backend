@@ -1,3 +1,4 @@
+const serverlessExpress = require("@vendia/serverless-express");
 const express = require("express");
 const cors = require("cors");
 const app = express();
@@ -41,4 +42,8 @@ app.get("/", (req, res) => {
   res.send("hello express");
 });
 
-app.listen(PORT, () => console.log("サーバーが起動しました"));
+if (process.env.NODE_ENV === "develop") {
+  app.listen(PORT, () => console.log("サーバーが起動しました"));
+}
+
+exports.handler = serverlessExpress({ app });
