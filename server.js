@@ -6,7 +6,7 @@ const app = express();
 // const notificationRouter = require("./routes/notifications");
 // const authRouter = require("./routes/auth");
 // const uploadRouter = require("./routes/upload");
-const PORT = 8080;
+const PORT = 3000;
 // const mongoose = require("mongoose");
 const helmet = require("helmet");
 require("dotenv").config();
