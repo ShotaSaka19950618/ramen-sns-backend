@@ -1,15 +1,17 @@
 const express = require("express");
-const cors = require("cors");
 const app = express();
+const cors = require("cors");
+const mongoose = require("mongoose");
+const helmet = require("helmet");
+require("dotenv").config();
 const userRouter = require("./routes/users");
 const postRouter = require("./routes/posts");
 const notificationRouter = require("./routes/notifications");
 const authRouter = require("./routes/auth");
 const uploadRouter = require("./routes/upload");
-const PORT = 3000;
-const mongoose = require("mongoose");
-const helmet = require("helmet");
-require("dotenv").config();
+
+const PORT = 8080;
+const HOST = "0.0.0.0";
 
 // CORS対策
 app.use(cors());
@@ -21,7 +23,7 @@ app.use(helmet());
 mongoose
   .connect(process.env.MONGOURL)
   .then(() => {
-    console.log("DB接続中・・・");
+    console.log("DB Connect");
   })
   .catch((err) => {
     console.log(err);
@@ -35,4 +37,9 @@ app.use("/api/notifications", notificationRouter);
 app.use("/api/auth", authRouter);
 app.use("/api/upload", uploadRouter);
 
-app.listen(PORT, () => console.log("サーバーが起動しました"));
+// 起動確認用
+app.get("/", (req, res) => {
+  res.send("Hello World");
+});
+
+app.listen(PORT, HOST, () => console.log("start server"));
