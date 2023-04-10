@@ -4,7 +4,7 @@
 twitterと似た感覚で操作できるように意識して作成しています。<br>
 レスポンシブ対応しているのでスマホからもご確認いただけます。<br>
 <table><tr><td>
-<img width="1467" alt="スクリーンショット 2023-04-07 17 05 50" src="https://user-images.githubusercontent.com/110725851/230569266-7b344125-adfe-4d1b-8b60-8394250d1887.png">
+<img width="1467" alt="スクリーンショット 2023-04-10 22 10 43" src="https://user-images.githubusercontent.com/110725851/230907564-5d105954-8fbe-4a7d-9cc4-d6eb8874e538.png">
 </td></tr></table>
 
 # URL
