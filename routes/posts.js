@@ -314,13 +314,27 @@ router.get("/:userid/ranking", isAuth, async (req, res) => {
         count: { $sum: 1 },
       }
     );
-    const ranking = shop.sort((shop1, shop2) => {
-      if (shop1.count === shop2.count) {
-        return shop2._id.length - shop1._id.length;
-      } else {
-        return shop2.count - shop1.count;
+    const sortShop = shop.sort((shop1, shop2) => {
+      if (shop1.count > shop2.count) {
+        return -1;
       }
+      if (shop1.count < shop2.count) {
+        return 1;
+      }
+      return 0;
     });
+    let rank, strCount;
+    const ranking = sortShop.map((shop, index) => {
+      if (shop.count !== strCount) {
+        rank = index + 1;
+        strCount = shop.count
+      }
+      return {
+        rank: rank,
+        shopname: shop._id,
+        count: shop.count
+      }
+    })
     return res.json({
       success: true,
       message: "店舗ランキングを取得しました",
