@@ -321,6 +321,14 @@ router.get("/:userid/ranking", isAuth, async (req, res) => {
       if (shop1.count < shop2.count) {
         return 1;
       }
+      if (shop1.count === shop2.count) {
+        if (shop1._id > shop2._id) {
+          return -1;
+        }
+        if (shop1._id < shop2._id) {
+          return 1;
+        }
+      }
       return 0;
     });
     let rank, strCount;
