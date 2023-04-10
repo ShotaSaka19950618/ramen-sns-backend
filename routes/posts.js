@@ -15,14 +15,16 @@ router.post("/", isAuth, async (req, res) => {
           commentsReceived: post._id,
         },
       });
-      const newNotification = new Notification({
-        useridSend: req.body.userid,
-        useridReceived: receivedPost.userid,
-        postid: post._id,
-        postDesc: post.desc,
-        desc: `あなたの投稿にコメントしました`,
-      });
-      await newNotification.save();
+      if (req.body.userid !== receivedPost.userid) {
+        const newNotification = new Notification({
+          useridSend: req.body.userid,
+          useridReceived: receivedPost.userid,
+          postid: post._id,
+          postDesc: post.desc,
+          desc: `あなたの投稿にコメントしました`,
+        });
+        await newNotification.save();
+      }
     }
     return res.json({
       success: true,
@@ -313,7 +315,11 @@ router.get("/:userid/ranking", isAuth, async (req, res) => {
       }
     );
     const ranking = shop.sort((shop1, shop2) => {
-      return new Date(shop2.count) - new Date(shop1.count);
+      if (shop1.count === shop2.count) {
+        return shop2._id.length - shop1._id.length;
+      } else {
+        return shop2.count - shop1.count;
+      }
     });
     return res.json({
       success: true,

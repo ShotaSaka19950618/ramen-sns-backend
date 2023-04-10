@@ -69,7 +69,14 @@ router.get("/user", async (req, res) => {
     const bearToken = req.headers["authorization"];
     const bearer = bearToken.split(" ");
     const token = bearer[1];
-    const user = jwt.verify(token, process.env.JWT_SECRET);
+    const login = jwt.verify(token, process.env.JWT_SECRET);
+    if (!login._id) {
+      res.status(200).json({
+        success: false,
+        message: "トークン認証に失敗しました！！"
+      })
+    }
+    const user = await User.findById(login._id);
     return res.status(200).json({
       success: true,
       message: "トークン認証に成功しました！！",
