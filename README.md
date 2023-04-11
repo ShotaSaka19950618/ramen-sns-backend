@@ -42,7 +42,7 @@ https://www.ramen-sns.com/<br>
   - Route53
 
 # 構成図
-![構成図](https://user-images.githubusercontent.com/110725851/230569072-c981843e-1999-43a5-9501-20d79a1648c8.png)
+![構成図](https://user-images.githubusercontent.com/110725851/231194619-46478e7b-79d0-4234-958b-68248b86dd78.png)
 
 # 機能一覧
 - ユーザー登録、ログイン機能
